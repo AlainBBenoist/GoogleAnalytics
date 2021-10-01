@@ -67,10 +67,14 @@ if __name__ == '__main__':
     START_DATE='2021-01-01'
     END_DATE='2021-08-31'
 
-    delta = datetime.timedelta(days=1)
-    start_date = datetime.date.today() - delta 
+    # Calculate yesterdate
+    start_date = datetime.date.today() - datetime.timedelta(days=1)
     print(start_date.isoformat())
+
+    # Create a Google Analytics reporter
     ga = GAReporter(KEYFILE)
+
+    # Get a view 
     response = ga.report(VIEW_ID, START_DATE, END_DATE)
     #print(response)
     #for result in ga.print(response):
@@ -80,3 +84,23 @@ if __name__ == '__main__':
     #print(response)
     for result in ga.print(response):
         print('{:96.96s} {:d}'.format(result['ga:pagePath'], result['ga:pageviews']))
+
+    print('===============================')
+    response = ga.report(VIEW_ID, start_date.isoformat(), start_date.isoformat(), metrics=['totalEvents', ], dimensions=['eventAction',])
+    #print(response)
+    for result in ga.print(response):
+        print('{:96.96s} {:d}'.format(result['ga:eventAction'], result['ga:totalEvents']))
+        
+    print('===============================')
+    response = ga.report(VIEW_ID, start_date.isoformat(), start_date.isoformat(), metrics=['impressions', 'adClicks', 'adCost' ], dimensions=['adGroup',])
+    #print(response)
+    for result in ga.print(response):
+        print('{:96.96s} {:8d} {:8d} {:6.2f}'.format(result['ga:adGroup'], result['ga:impressions'], result['ga:adClicks'], result['ga:adCost']))
+
+    print('===============================')
+    response = ga.report(VIEW_ID, start_date.isoformat(), start_date.isoformat(), metrics=['searchResultViews' ], dimensions=['searchKeyword',])
+    #print(response)
+    for result in ga.print(response):
+        print('{:96.96s} {:8d}'.format(result['ga:searchKeyword'], result['ga:searchResultViews']))
+        
+
